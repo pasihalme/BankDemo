@@ -1,5 +1,3 @@
-import './style.css'
-
 const STORAGE_KEY = 'northstar-customers-v1'
 
 const seedCustomers = [
