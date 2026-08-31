@@ -9,7 +9,7 @@ const seedCustomers = [
   { id: 'C-11103', name: 'Oskari Maki', segment: 'Private', status: 'Active', accounts: 2, balance: 18704.11, phone: '+358 45 555 8820', email: 'oskari.maki@example.com', city: 'Oulu', joined: '2023-02-18', risk: 'Low' },
 ]
 
-let customers = loadCustomers()
+let customers = await loadCustomers()
 let selectedId = customers[0]?.id ?? null
 let query = ''
 let statusFilter = 'All'
@@ -114,16 +114,51 @@ const searchInput = document.querySelector('#search')
 const dialog = document.querySelector('#customer-dialog')
 const form = document.querySelector('#customer-form')
 
-function loadCustomers() {
+function loadBrowserCustomers() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || seedCustomers
+    const storedCustomers = JSON.parse(localStorage.getItem(STORAGE_KEY))
+    return Array.isArray(storedCustomers) ? storedCustomers : seedCustomers
   } catch {
     return seedCustomers
   }
 }
 
-function saveCustomers() {
+async function persistCustomerFile(customerRecords) {
+  const response = await fetch('/api/customers', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(customerRecords),
+  })
+  if (!response.ok) throw new Error('Could not save customer file')
+}
+
+async function loadCustomers() {
+  const browserCustomers = loadBrowserCustomers()
+  if (!import.meta.env.DEV) return browserCustomers
+
+  try {
+    const response = await fetch('/api/customers')
+    if (!response.ok) throw new Error('Could not read customer file')
+    const fileCustomers = await response.json()
+    if (Array.isArray(fileCustomers)) return fileCustomers
+    await persistCustomerFile(browserCustomers)
+  } catch (error) {
+    console.warn(error)
+  }
+  return browserCustomers
+}
+
+async function saveCustomers() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(customers))
+  if (!import.meta.env.DEV) return true
+
+  try {
+    await persistCustomerFile(customers)
+    return true
+  } catch (error) {
+    console.warn(error)
+    return false
+  }
 }
 
 function escapeHtml(value) {
@@ -208,7 +243,7 @@ function nextCustomerId() {
   return `C-${highest + 1}`
 }
 
-function handleAction(action) {
+async function handleAction(action) {
   if (action === 'new') openForm('new')
   if (action === 'edit') openForm('edit')
   if (action === 'delete') {
@@ -216,9 +251,9 @@ function handleAction(action) {
     if (!customer || !confirm(`Delete ${customer.name} (${customer.id})?`)) return
     customers = customers.filter((item) => item.id !== selectedId)
     selectedId = customers[0]?.id ?? null
-    saveCustomers()
+    const saved = await saveCustomers()
     render()
-    showToast('CUSTOMER RECORD DELETED')
+    showToast(saved ? 'CUSTOMER RECORD DELETED' : 'DELETED; FILE SAVE FAILED')
   }
   if (action === 'export') exportCsv()
 }
@@ -287,7 +322,7 @@ document.querySelector('#clear-search').addEventListener('click', () => {
   render()
 })
 
-form.addEventListener('submit', (event) => {
+form.addEventListener('submit', async (event) => {
   event.preventDefault()
   const data = Object.fromEntries(new FormData(form))
   const existing = customers.find((customer) => customer.id === data.id)
@@ -306,10 +341,10 @@ form.addEventListener('submit', (event) => {
   }
   customers = existing ? customers.map((item) => item.id === customer.id ? customer : item) : [customer, ...customers]
   selectedId = customer.id
-  saveCustomers()
+  const saved = await saveCustomers()
   dialog.close()
   render()
-  showToast(existing ? 'CUSTOMER RECORD UPDATED' : 'CUSTOMER RECORD CREATED')
+  showToast(saved ? (existing ? 'CUSTOMER RECORD UPDATED' : 'CUSTOMER RECORD CREATED') : 'SAVED IN BROWSER; FILE SAVE FAILED')
 })
 
 function updateClock() {

@@ -1,0 +1,80 @@
+[
+  {
+    "id": "C-10482",
+    "name": "Aino Lehtinen",
+    "segment": "Private",
+    "status": "Active",
+    "accounts": 3,
+    "balance": 42850.2,
+    "phone": "+358 40 555 0142",
+    "email": "aino.lehtinen@example.com",
+    "city": "Helsinki",
+    "joined": "2018-04-12",
+    "risk": "Low"
+  },
+  {
+    "id": "C-10731",
+    "name": "Mikael Korhonen",
+    "segment": "Private",
+    "status": "Review",
+    "accounts": 2,
+    "balance": 12640.75,
+    "phone": "+358 50 555 0198",
+    "email": "mikael.k@example.com",
+    "city": "Espoo",
+    "joined": "2020-09-23",
+    "risk": "Medium"
+  },
+  {
+    "id": "C-10809",
+    "name": "Nordhavn Logistics Oy",
+    "segment": "Business",
+    "status": "Active",
+    "accounts": 5,
+    "balance": 384291,
+    "phone": "+358 9 555 1220",
+    "email": "finance@nordhavn.example",
+    "city": "Vantaa",
+    "joined": "2016-01-30",
+    "risk": "Low"
+  },
+  {
+    "id": "C-10914",
+    "name": "Elina Nieminen",
+    "segment": "Private",
+    "status": "Blocked",
+    "accounts": 1,
+    "balance": 940.42,
+    "phone": "+358 44 555 7311",
+    "email": "elina.n@example.com",
+    "city": "Turku",
+    "joined": "2022-11-05",
+    "risk": "High"
+  },
+  {
+    "id": "C-11027",
+    "name": "Lakeview Foods Ab",
+    "segment": "Business",
+    "status": "Review",
+    "accounts": 4,
+    "balance": 97820.6,
+    "phone": "+358 2 555 3304",
+    "email": "office@lakeview.example",
+    "city": "Tampere",
+    "joined": "2019-06-14",
+    "risk": "Medium"
+  },
+  {
+    "id": "C-11103",
+    "name": "Oskari Maki",
+    "segment": "Private",
+    "status": "Active",
+    "accounts": 2,
+    "balance": 18704.11,
+    "phone": "+358 45 555 8820",
+    "email": "oskari.maki@example.com",
+    "city": "Oulu",
+    "joined": "2023-02-18",
+    "risk": "Low"
+  }
+]
